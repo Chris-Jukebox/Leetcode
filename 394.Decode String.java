@@ -31,13 +31,53 @@ s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
 public class Solution {
     public String decodeString(String s) {
         int len = s.length();
-        Stack stack = new Stack();
-        String res;
-        res = decode(s, len, 0, stack, new StringBuilder());
-
+        // Count stack
+        Stack<Integer> countStack = new Stack();
+        // Previous string Stack
+        Stack<String> resStack = new Stack();
+        String res = "";
+        int index = 0;
+        while(index < len)
+        {
+        	char cur = s.charAt(index);
+        	// 数字的情况
+        	if(Character.isDigit(cur) == true)
+        	{
+        		int count = cur - '0';
+        		char next = s.charAt(++index);
+        		while(Character.isDigit(next) == true) {
+        			count = count * 10 + next - '0';
+        			index++;
+        			next = s.charAt(index);
+        		}
+        		countStack.push(count);
+        	}
+        	// 左括号的情况
+        	else if(cur == '[')
+        	{
+        		// store 当前上一层的内容进resStack
+        		resStack.push(res);
+        		res = "";
+        		index++;
+        	}
+        	// 右括号 我们进行弹出操作
+        	else if(cur == ']')
+        	{
+        		//首先弹出上一层的内容
+        		StringBuilder temp = new StringBuilder(resStack.pop());
+        		//弹出对当前括号里的内容（res）要重复的次数
+        		int cnt = countStack.pop();
+        		for(int i = 0; i < cnt; i++)
+        			temp.append(res);
+        		res = temp.toString();
+        		index++;
+        	}
+        	else
+        	{
+        		res += cur;
+        		index++;
+        	}
+        }
+        return res;
     }
-
-
-
-
 }

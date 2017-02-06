@@ -37,11 +37,13 @@ public class Solution {
 
     void search(Trie trie, List<List<String>> res, List<String> resBuilder, int len) {
     	// return true
-    	if(resBuilder.size() == len){
-    		res.add(resBuilder);
+    	if(resBuilder.size() == len) {
+    	    //高能预警 因为resBuilder是个reference会被最后情况 我们必须来个deep copy
+    	    ArrayList<String> copy = new ArrayList<>();
+    	    copy.addAll(resBuilder);
+    		res.add(copy);
     		return;
     	}
-
     	// build prefix
     	int curLen = resBuilder.size();
     	StringBuilder prefix = new StringBuilder();
@@ -70,7 +72,7 @@ public class Solution {
     	TrieNode get(char c){
     		int index = c - 'a';
     		if(this.children[index] != null)
-    			return this;
+    			return this.children[index];
     		else
     			return null;
     	}
@@ -85,9 +87,10 @@ public class Solution {
 
     class Trie {
     	TrieNode root;
-
+        
     	Trie(String[] words)
     	{
+    	    root = new TrieNode();
     		for(String s : words) {
     			TrieNode cur = root;
     			for(char c : s.toCharArray())
@@ -95,6 +98,8 @@ public class Solution {
     				TrieNode next = new TrieNode();
     				if(cur.get(c) == null)
     					next = cur.add(c);
+    				else 
+    				    next = cur.get(c);
     				next.startWith.add(s);
     				cur = next;
     			}
